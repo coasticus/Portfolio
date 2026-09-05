@@ -3,313 +3,155 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>coasticus — roblox environment builder & gfx</title>
+  <title>coasticus</title>
   <style>
-    :root {
-      --bg-base: #111215;
-      --bg-surface: #181a1f;
-      --border: #282c35;
-      --border-hover: #3e4452;
-      --accent: #d97706;
-      --text-main: #e2e4e9;
-      --text-muted: #8b92a0;
-      --font-mono: "SF Mono", "Consolas", monospace;
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
-    html, body {
-      min-height: 100%;
-      overflow-y: auto !important;
-      overflow-x: hidden;
-      background-color: var(--bg-base);
-      color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      line-height: 1.6;
-    }
-
     body {
-      padding: 0 1.5rem 6rem;
+      background: #0f1012;
+      color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 3rem 1.5rem 6rem;
+      line-height: 1.5;
     }
 
-    .container {
-      max-width: 960px;
+    .wrapper {
+      max-width: 1040px;
       margin: 0 auto;
     }
 
     header {
-      padding: 4rem 0 2.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .tag {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
+      margin-bottom: 2.5rem;
     }
 
     h1 {
-      font-size: 2.25rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-size: 1.75rem;
+      font-weight: 600;
       color: #fff;
-      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
     }
 
     .bio {
-      color: var(--text-muted);
-      font-size: 1rem;
-      max-width: 620px;
+      color: #888;
+      font-size: 0.95rem;
+      margin-top: 0.4rem;
     }
 
-    .breakdown-grid {
+    .gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1rem;
-      margin: 2.5rem 0;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
     }
 
-    .breakdown-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.25rem;
-    }
-
-    .breakdown-card h3 {
-      font-size: 1rem;
-      color: #fff;
-      margin-bottom: 0.35rem;
-    }
-
-    .breakdown-card p {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .section-title {
-      font-size: 1.35rem;
-      font-weight: 600;
-      color: #fff;
-      margin: 3.5rem 0 1.25rem;
-    }
-
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.25rem;
-    }
-
-    .project-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
+    .work-item {
+      background: #15161a;
+      border: 1px solid #22252c;
+      border-radius: 6px;
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: border-color 0.15s ease;
     }
 
-    .project-card:hover {
-      border-color: var(--border-hover);
-    }
-
-    .project-thumb {
+    .work-item img {
       width: 100%;
-      height: 220px;
+      height: 260px;
       object-fit: cover;
       display: block;
-      background: #16181d;
+      background: #1a1c22;
     }
 
-    .project-info {
-      padding: 1.25rem;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .project-title {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 0.25rem;
-    }
-
-    .project-desc {
+    .work-caption {
+      padding: 0.85rem 1rem;
       font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 0.75rem;
+      color: #aaa;
+      border-top: 1px solid #1f2228;
     }
 
-    .labels {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
+    .work-caption strong {
+      color: #eee;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 0.15rem;
     }
 
-    .label {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      background: var(--bg-base);
-      border: 1px solid var(--border);
-      padding: 0.15rem 0.45rem;
-      border-radius: 4px;
-      color: var(--text-muted);
-    }
-
-    .contact-box {
-      margin-top: 4.5rem;
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 2.5rem;
-      text-align: center;
-    }
-
-    .contact-box h2 {
-      font-size: 1.4rem;
-      color: #fff;
-      margin-bottom: 0.35rem;
-    }
-
-    .contact-box p {
-      color: var(--text-muted);
+    footer {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid #1f2228;
       font-size: 0.9rem;
-      margin-bottom: 1.25rem;
+      color: #777;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: gap;
+      gap: 1rem;
     }
 
-    .discord-pill {
-      display: inline-block;
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      background: var(--bg-base);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      padding: 0.5rem 1.25rem;
-      border-radius: 6px;
+    footer a {
+      color: #ccc;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="wrapper">
     <header>
-      <div class="tag">status // taking commissions</div>
       <h1>coasticus</h1>
-      <p class="bio">
-        Roblox environment builder and GFX artist. I create modular sci-fi/horror environments, level layouts in Studio, and 3D avatar renders using Blender and Photoshop. Built clean and optimized for performance.
-      </p>
+      <p class="bio">Roblox environments, level design, and 3D renders made in Studio, Blender, and Photoshop.</p>
     </header>
 
-    <div class="breakdown-grid">
-      <div class="breakdown-card">
-        <h3>Environment Design</h3>
-        <p>Interiors, industrial blast gates, and corridor layouts with proper collision and clean part budgets.</p>
-      </div>
-      <div class="breakdown-card">
-        <h3>Lighting & Atmosphere</h3>
-        <p>Fine-tuned Future/ShadowMap lighting, emergency red points, and moody volumetric falloffs.</p>
-      </div>
-      <div class="breakdown-card">
-        <h3>GFX & Compositing</h3>
-        <p>Avatar renders created with Blender Cycles, posed rigs, and finished with post-processing in Photoshop.</p>
-      </div>
-    </div>
-
-    <h2 class="section-title">Selected Work</h2>
-
-    <div class="gallery-grid">
-      <!-- 1. Industrial Corridor -->
-      <div class="project-card">
-        <img src="image_2026-09-05_120537395.png" alt="Industrial Corridor" class="project-thumb" />
-        <div class="project-info">
-          <div>
-            <div class="project-title">Industrial Corridor</div>
-            <p class="project-desc">Modular hallway setup with emergency point lights, steel framing, and tight corners.</p>
-          </div>
-          <div class="labels">
-            <span class="label">modular</span>
-            <span class="label">lighting</span>
-          </div>
+    <main class="gallery">
+      <div class="work-item">
+        <img src="image_2026-09-05_120537395.png" alt="Industrial Corridor" />
+        <div class="work-caption">
+          <strong>Industrial Corridor</strong>
+          Modular hallway test with concrete framing and point lighting.
         </div>
       </div>
 
-      <!-- 2. Overgrown Sci-Fi Door -->
-      <div class="project-card">
-        <img src="image_2026-09-05_120605268.png" alt="Overgrown Sci-Fi Blast Door" class="project-thumb" />
-        <div class="project-info">
-          <div>
-            <div class="project-title">Overgrown Sci-Fi Blast Gate</div>
-            <p class="project-desc">Heavy industrial sci-fi doorway dressed with red emergency lighting and climbing vegetation foliage.</p>
-          </div>
-          <div class="labels">
-            <span class="label">sci-fi</span>
-            <span class="label">vegetation</span>
-            <span class="label">lighting</span>
-          </div>
+      <div class="work-item">
+        <img src="image_2026-09-05_120605268.png" alt="Overgrown Door" />
+        <div class="work-caption">
+          <strong>Overgrown Blast Gate</strong>
+          Sci-fi door structure built with red lighting and exterior ivy.
         </div>
       </div>
 
-      <!-- 3. Outdoor Grass GFX & Photoshop -->
-      <div class="project-card">
-        <img src="image_2026-09-05_120619417.png" alt="Outdoor Grass Avatar GFX" class="project-thumb" />
-        <div class="project-info">
-          <div>
-            <div class="project-title">Outdoor Avatar GFX</div>
-            <p class="project-desc">Custom avatar render in a dense grass environment, lit and composited with post-processing in Photoshop.</p>
-          </div>
-          <div class="labels">
-            <span class="label">gfx</span>
-            <span class="label">photoshop</span>
-            <span class="label">lighting</span>
-          </div>
+      <div class="work-item">
+        <img src="image_2026-09-05_120619417.png" alt="Grass Scene GFX" />
+        <div class="work-caption">
+          <strong>Field Scene GFX</strong>
+          Avatar render placed in custom grass terrain, composited in Photoshop.
         </div>
       </div>
 
-      <!-- 4. Blender Posed Scene -->
-      <div class="project-card">
-        <img src="image_2026-09-05_120634386.png" alt="Blender Character Scene" class="project-thumb" />
-        <div class="project-info">
-          <div>
-            <div class="project-title">Blender Character Scene</div>
-            <p class="project-desc">Custom avatar rig posed and lit directly in Blender for cinematic graphic framing.</p>
-          </div>
-          <div class="labels">
-            <span class="label">blender</span>
-            <span class="label">posing</span>
-            <span class="label">render</span>
-          </div>
+      <div class="work-item">
+        <img src="image_2026-09-05_120634386.png" alt="Blender Rig Pose" />
+        <div class="work-caption">
+          <strong>Character Pose Test</strong>
+          Rig lighting and framing in Blender.
         </div>
       </div>
 
-      <!-- 5. Superbloomed Cycles Render + Photoshop -->
-      <div class="project-card">
-        <img src="renderbux-1788456840672-superbloomed.png" alt="Cycles Bloom Render" class="project-thumb" />
-        <div class="project-info">
-          <div>
-            <div class="project-title">Cycles Bloom & FX Composite</div>
-            <p class="project-desc">Blender Cycles render finished with high-contrast bloom passes and layer compositing in Photoshop.</p>
-          </div>
-          <div class="labels">
-            <span class="label">cycles</span>
-            <span class="label">photoshop</span>
-            <span class="label">bloom</span>
-          </div>
+      <div class="work-item">
+        <img src="renderbux-1788456840672-superbloomed.png" alt="Cycles Bloom Render" />
+        <div class="work-caption">
+          <strong>Bloom Render</strong>
+          Cycles render test focused on high exposure and edge lighting.
         </div>
       </div>
-    </div>
+    </main>
 
-    <div class="contact-box">
-      <h2>Commissions</h2>
-      <p>Available for Roblox environment building, modular sci-fi/horror sets, and avatar GFX. Flat Robux or group payouts.</p>
-      <div class="discord-pill">Discord: coasticus</div>
-    </div>
+    <footer>
+      <span>Open for commissions (flat Robux or group payout)</span>
+      <span>Discord: <strong>coasticus</strong></span>
+    </footer>
   </div>
 </body>
 </html>
