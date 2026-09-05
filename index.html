@@ -22,16 +22,22 @@
       padding: 0;
     }
 
-    body {
+    html, body {
+      min-height: 100%;
+      overflow-y: auto !important;
+      overflow-x: hidden;
       background-color: var(--bg-base);
       color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       line-height: 1.6;
-      padding: 0 1.5rem 5rem;
+    }
+
+    body {
+      padding: 0 1.5rem 6rem;
     }
 
     .container {
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto;
     }
 
@@ -63,7 +69,7 @@
 
     .breakdown-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 1rem;
       margin: 2.5rem 0;
     }
@@ -95,7 +101,7 @@
 
     .gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.25rem;
     }
 
@@ -104,6 +110,8 @@
       border: 1px solid var(--border);
       border-radius: 8px;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
       transition: border-color 0.15s ease;
     }
 
@@ -113,7 +121,7 @@
 
     .project-thumb {
       width: 100%;
-      height: 200px;
+      height: 220px;
       object-fit: cover;
       display: block;
       background: #16181d;
@@ -121,6 +129,10 @@
 
     .project-info {
       padding: 1.25rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .project-title {
@@ -153,11 +165,11 @@
     }
 
     .contact-box {
-      margin-top: 4rem;
+      margin-top: 4.5rem;
       background: var(--bg-surface);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 2.25rem;
+      padding: 2.5rem;
       text-align: center;
     }
 
@@ -191,33 +203,36 @@
       <div class="tag">status // taking commissions</div>
       <h1>coasticus</h1>
       <p class="bio">
-        Roblox builder and GFX artist. I create modular environments, gritty horror lobbies, and 3D avatar renders with custom lighting setups. Everything in Studio is built with clean geometry and low part counts so servers run smoothly.
+        Roblox builder and GFX artist. I build modular environments, horror interiors, and produce 3D avatar renders with custom lighting. Built with low part counts and performance in mind.
       </p>
     </header>
 
     <div class="breakdown-grid">
       <div class="breakdown-card">
         <h3>Level Layouts & Interiors</h3>
-        <p>Lobbies, modular hallways, and game zones built with proper collision, monster navigation paths, and clean part structures.</p>
+        <p>Lobbies, modular hallways, and game zones built with proper collision and clean part budgets.</p>
       </div>
       <div class="breakdown-card">
         <h3>Lighting & Atmosphere</h3>
-        <p>Fine-tuned Future/ShadowMap lighting passes, dynamic point lights, and volumetric fog tailored for horror experiences.</p>
+        <p>Fine-tuned Future/ShadowMap lighting, dynamic point lights, and volumetric fog for horror games.</p>
       </div>
       <div class="breakdown-card">
         <h3>GFX & Avatar Renders</h3>
-        <p>Custom 3D character renders made in Blender using Cycles, focused on atmospheric rim lighting, scene posing, and game thumbnails.</p>
+        <p>Custom 3D character renders made in Blender using Cycles, focused on rim lighting and clean composition.</p>
       </div>
     </div>
 
     <h2 class="section-title">Selected Work</h2>
 
     <div class="gallery-grid">
+      <!-- 1. Industrial Corridor -->
       <div class="project-card">
         <img src="image_2026-09-05_120537395.png" alt="Industrial Corridor" class="project-thumb" />
         <div class="project-info">
-          <div class="project-title">Industrial Corridor</div>
-          <p class="project-desc">Modular hallway setup with emergency lighting, steel framing, and collision-checked walkways.</p>
+          <div>
+            <div class="project-title">Industrial Corridor</div>
+            <p class="project-desc">Modular hallway setup with emergency point lights, steel framing, and tight corners.</p>
+          </div>
           <div class="labels">
             <span class="label">modular</span>
             <span class="label">lighting</span>
@@ -225,11 +240,14 @@
         </div>
       </div>
 
+      <!-- 2. Cabin Lobby -->
       <div class="project-card">
         <img src="image_2026-09-05_120605268.png" alt="Cabin Survival Lobby" class="project-thumb" />
         <div class="project-info">
-          <div class="project-title">Cabin Lobby & Voting Area</div>
-          <p class="project-desc">Compact lobby layout built with brick fireplace masonry, second-floor spacing, and voting pads.</p>
+          <div>
+            <div class="project-title">Cabin Lobby & Fireplace</div>
+            <p class="project-desc">Horror lobby layout featuring brick fireplace masonry, second-floor spacing, and voting pads.</p>
+          </div>
           <div class="labels">
             <span class="label">interior</span>
             <span class="label">lobby</span>
@@ -237,17 +255,72 @@
         </div>
       </div>
 
+      <!-- 3. Classic Stud Map -->
       <div class="project-card">
-        <img src="image_2026-09-05_120619417.png" alt="Classic Outdoor Scene" class="project-thumb" />
+        <img src="image_2026-09-05_120619417.png" alt="Classic Map Environment" class="project-thumb" />
         <div class="project-info">
-          <div class="project-title">Classic Map Layout</div>
-          <p class="project-desc">Daylight outdoor environment testing classic stud surfaces, player scales, and terrain lighting.</p>
+          <div>
+            <div class="project-title">Classic Terrain & Avatar Scale</div>
+            <p class="project-desc">Outdoor environment scale testing using classic stud textures, sunlight angles, and smooth terrain grass.</p>
+          </div>
           <div class="labels">
-            <span class="label">environment</span>
-            <span class="label">retro-style</span>
+            <span class="label">classic</span>
+            <span class="label">terrain</span>
           </div>
         </div>
       </div>
 
+      <!-- 4. Posed Character Scene -->
       <div class="project-card">
-        <img src="image_202
+        <img src="image_2026-09-05_120634386.png" alt="Posed Scene Render" class="project-thumb" />
+        <div class="project-info">
+          <div>
+            <div class="project-title">Posed Character Scene</div>
+            <p class="project-desc">Custom avatar posing and scene composition set up for game marketing and thumbnail graphics.</p>
+          </div>
+          <div class="labels">
+            <span class="label">gfx</span>
+            <span class="label">posing</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Superbloomed Cycles Render -->
+      <div class="project-card">
+        <img src="renderbux-1788456840672-superbloomed.png" alt="Cycles Bloom Render" class="project-thumb" />
+        <div class="project-info">
+          <div>
+            <div class="project-title">Cycles Bloom Render</div>
+            <p class="project-desc">Blender Cycles lighting test with high-exposure bloom and volumetric atmosphere.</p>
+          </div>
+          <div class="labels">
+            <span class="label">cycles</span>
+            <span class="label">lighting</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. New Slot for Your Next Screenshot -->
+      <div class="project-card">
+        <img src="new_build.png" alt="New Build Showcase" class="project-thumb" />
+        <div class="project-info">
+          <div>
+            <div class="project-title">Environment / GFX Showcase</div>
+            <p class="project-desc">Recent studio build pass focused on atmospheric detail and optimized part limits.</p>
+          </div>
+          <div class="labels">
+            <span class="label">studio</span>
+            <span class="label">environment</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-box">
+      <h2>Commissions</h2>
+      <p>Available for Roblox map building, lobby designs, and avatar GFX. Flat Robux or group payouts.</p>
+      <div class="discord-pill">Discord: coasticus</div>
+    </div>
+  </div>
+</body>
+</html>
