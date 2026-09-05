@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>coasticus // industrial environments & assets</title>
+  <title>coasticus. environments. engineered.</title>
   <style>
     :root {
-      --bg-base: #101114;
-      --bg-surface: #181a1f;
-      --border-steel: #2f3440;
-      --border-light: #444b5c;
+      --bg-base: #0b0c0e;
+      --bg-surface: #13151a;
+      --border-steel: #242833;
+      --border-light: #363c4d;
       --amber-hazard: #e59424;
-      --amber-dim: rgba(229, 148, 36, 0.12);
-      --text-main: #d4d7df;
-      --text-dim: #7f8799;
-      --font-mono: "SF Mono", "Consolas", "Courier New", monospace;
+      --text-main: #f5f5f7;
+      --text-dim: #86868b;
+      --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      --font-mono: "SF Mono", "Consolas", monospace;
     }
 
     * {
@@ -26,151 +26,165 @@
     body {
       background-color: var(--bg-base);
       color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      line-height: 1.6;
-      padding: 0 1.5rem 5rem;
+      font-family: var(--font-system);
+      letter-spacing: -0.015em;
+      line-height: 1.5;
+      padding: 0 1.5rem 6rem;
       background-image: 
-        linear-gradient(rgba(16, 17, 20, 0.96), rgba(16, 17, 20, 0.96)),
-        radial-gradient(#282c37 1px, transparent 1px);
-      background-size: 100% 100%, 20px 20px;
+        linear-gradient(rgba(11, 12, 14, 0.97), rgba(11, 12, 14, 0.97)),
+        radial-gradient(#1f232c 1px, transparent 1px);
+      background-size: 100% 100%, 24px 24px;
     }
 
     .container {
-      max-width: 960px;
+      max-width: 980px;
       margin: 0 auto;
     }
 
+    /* Hero */
     header {
-      padding: 4.5rem 0 2.5rem;
-      border-bottom: 2px solid var(--border-steel);
+      padding: 5rem 0 3rem;
+      border-bottom: 1px solid var(--border-steel);
     }
 
-    .terminal-tag {
+    .pill-tag {
       font-family: var(--font-mono);
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--amber-hazard);
-      background: var(--amber-dim);
-      border: 1px solid rgba(229, 148, 36, 0.3);
-      padding: 0.2rem 0.6rem;
-      letter-spacing: 1px;
-      display: inline-block;
-      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      display: inline-block;
     }
 
     h1 {
-      font-size: 2.75rem;
-      font-weight: 900;
-      letter-spacing: -1px;
-      text-transform: uppercase;
+      font-size: 3.25rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
       color: #fff;
+      margin-bottom: 1rem;
     }
 
-    .bio {
-      margin-top: 0.75rem;
-      max-width: 650px;
+    .lead {
+      font-size: 1.25rem;
       color: var(--text-dim);
-      font-size: 0.95rem;
+      max-width: 680px;
+      font-weight: 400;
+      line-height: 1.45;
     }
 
+    /* Specs Grid */
     .specs-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      margin: 2.5rem 0;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+      margin: 3.5rem 0;
     }
 
     .spec-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-steel);
-      border-left: 3px solid var(--border-light);
-      padding: 1.25rem;
+      border-radius: 12px;
+      padding: 1.75rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .spec-card:hover {
+      border-color: var(--border-light);
+    }
+
+    .spec-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--amber-hazard);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
     }
 
     .spec-card h3 {
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
       color: #fff;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.5rem;
     }
 
     .spec-card p {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: var(--text-dim);
+      line-height: 1.5;
     }
 
+    /* Section Title */
     .section-header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin: 3.5rem 0 1.5rem;
+      margin: 4rem 0 2rem;
     }
 
     .section-header h2 {
-      font-family: var(--font-mono);
-      font-size: 1.1rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
       color: #fff;
-      white-space: nowrap;
     }
 
-    .section-line {
-      height: 1px;
-      background: var(--border-steel);
-      width: 100%;
+    .section-header p {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      margin-top: 0.25rem;
     }
 
+    /* Gallery */
     .gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
     }
 
     .project-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-steel);
+      border-radius: 12px;
       overflow: hidden;
-      transition: border-color 0.2s ease, transform 0.2s ease;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
     }
 
     .project-card:hover {
+      transform: translateY(-4px);
       border-color: var(--amber-hazard);
-      transform: translateY(-3px);
     }
 
     .project-thumb {
       width: 100%;
       height: 220px;
       object-fit: cover;
-      background: #14161a;
+      background: #111317;
       display: block;
     }
 
     .project-info {
-      padding: 1.25rem;
+      padding: 1.5rem;
     }
 
     .project-title {
-      font-family: var(--font-mono);
-      font-size: 1rem;
-      font-weight: 700;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
       color: #fff;
       margin-bottom: 0.35rem;
     }
 
     .project-desc {
-      font-size: 0.85rem;
+      font-size: 0.875rem;
       color: var(--text-dim);
-      margin-bottom: 1rem;
+      line-height: 1.5;
+      margin-bottom: 1.25rem;
     }
 
     .tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.4rem;
+      gap: 0.5rem;
     }
 
     .tag {
@@ -178,33 +192,34 @@
       background: var(--bg-base);
       border: 1px solid var(--border-steel);
       font-size: 0.7rem;
-      padding: 0.15rem 0.45rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
       color: var(--text-dim);
-      text-transform: uppercase;
     }
 
+    /* Contact Box */
     .contact-box {
-      margin-top: 4rem;
+      margin-top: 5rem;
       background: var(--bg-surface);
       border: 1px solid var(--border-steel);
-      padding: 2.5rem;
+      border-radius: 16px;
+      padding: 3.5rem 2rem;
       text-align: center;
     }
 
     .contact-box h2 {
-      font-family: var(--font-mono);
-      font-size: 1.2rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
       color: #fff;
       margin-bottom: 0.5rem;
     }
 
     .contact-box p {
-      font-size: 0.9rem;
+      font-size: 1rem;
       color: var(--text-dim);
-      max-width: 500px;
-      margin: 0 auto 1.5rem;
+      max-width: 520px;
+      margin: 0 auto 2rem;
     }
 
     .discord-badge {
@@ -213,119 +228,120 @@
       background: var(--bg-base);
       border: 1px solid var(--amber-hazard);
       color: var(--amber-hazard);
-      padding: 0.6rem 1.4rem;
+      padding: 0.75rem 1.75rem;
+      border-radius: 8px;
       font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 1px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <div class="terminal-tag">Status: Available for Commissions</div>
-      <h1>coasticus</h1>
-      <p class="bio">
-        Roblox environment builder and 3D prop artist specializing in industrial decay, grimy modular corridors, and low-poly horror atmospheres optimized for performance.
+      <div class="pill-tag">status // commissions open</div>
+      <h1>Atmosphere.<br>Framed to perfection.</h1>
+      <p class="lead">
+        I engineer gritty, high-tension Roblox environments. Built exclusively with optimized geometry, deliberate shadow play, and performance-first architecture. Zero bloat.
       </p>
     </header>
 
     <div class="specs-grid">
       <div class="spec-card">
-        <h3>01 // Environment Design</h3>
-        <p>Dirty industrial sets, containment chambers, and concrete structures with low-light volumetric styling.</p>
+        <div class="spec-label">Atmospheric Tuning</div>
+        <h3>Light with intention.</h3>
+        <p>Dynamic point sources, deep volumetric fog, and heavy shadow casting designed to invoke dread without tanking render passes.</p>
       </div>
       <div class="spec-card">
-        <h3>02 // 3D Mesh Assets</h3>
-        <p>Game-ready prop packs modeled in Blender, custom metal/concrete texturing, and clean collision meshes.</p>
+        <div class="spec-label">Engine Optimization</div>
+        <h3>High framerates. Always.</h3>
+        <p>Aggressive instancing, tight collision bounds, and clean part structures engineered to stay locked at 60 FPS in dense 50-player servers.</p>
       </div>
       <div class="spec-card">
-        <h3>03 // Engine Optimization</h3>
-        <p>Strict part budgets, modular kits, and mesh instancing built to maintain stable FPS in 50+ player servers.</p>
+        <div class="spec-label">Modular Architecture</div>
+        <h3>Built to scale.</h3>
+        <p>Interiors, industrial hubs, and lobby layouts delivered as clean, self-contained .rbxm components ready for immediate game integration.</p>
       </div>
     </div>
 
     <div class="section-header">
-      <h2>Recent Builds</h2>
-      <div class="section-line"></div>
+      <h2>Selected work.</h2>
+      <p>A closer look at recent environments, interiors, and lighting passes.</p>
     </div>
 
     <div class="gallery-grid">
       <!-- Build 1 -->
       <div class="project-card">
-        <img src="image_2026-09-05_120537395.png" alt="Build Showcase 1" class="project-thumb" />
+        <img src="image_2026-09-05_120537395.png" alt="Industrial Corridor" class="project-thumb" />
         <div class="project-info">
           <div class="project-title">Industrial Corridor</div>
-          <p class="project-desc">Modular hallway with emergency lighting, structural beams, and clean collision meshes.</p>
+          <p class="project-desc">Emergency lighting, cold steel beams, and narrow sightlines engineered for tension.</p>
           <div class="tags">
-            <span class="tag">Studio</span>
-            <span class="tag">Modular</span>
-            <span class="tag">Horror</span>
+            <span class="tag">lighting</span>
+            <span class="tag">corridor</span>
+            <span class="tag">60fps</span>
           </div>
         </div>
       </div>
 
       <!-- Build 2 -->
       <div class="project-card">
-        <img src="image_2026-09-05_120605268.png" alt="Build Showcase 2" class="project-thumb" />
+        <img src="image_2026-09-05_120605268.png" alt="Cabin Survival Lobby" class="project-thumb" />
         <div class="project-info">
-          <div class="project-title">Cabin Lobby / Voting Zone</div>
-          <p class="project-desc">Custom interior layout featuring masonry fireplace, interactive voting platforms, and warm point-lighting.</p>
+          <div class="project-title">Cabin Lobby & Voting Pads</div>
+          <p class="project-desc">Compact horror lobby layout with masonry fireplace accents and integrated UI voting pads.</p>
           <div class="tags">
-            <span class="tag">Interior</span>
-            <span class="tag">Lighting</span>
-            <span class="tag">Lobby</span>
+            <span class="tag">interior</span>
+            <span class="tag">lobby</span>
+            <span class="tag">optimized</span>
           </div>
         </div>
       </div>
 
       <!-- Build 3 -->
       <div class="project-card">
-        <img src="image_2026-09-05_120619417.png" alt="Build Showcase 3" class="project-thumb" />
+        <img src="image_2026-09-05_120619417.png" alt="Environment Showcase" class="project-thumb" />
         <div class="project-info">
-          <div class="project-title">Environment & Render Showcase</div>
-          <p class="project-desc">Atmospheric level framing and custom asset set dressed for survival horror gameplay.</p>
+          <div class="project-title">Containment Facility</div>
+          <p class="project-desc">High-contrast ambient lighting calibrated specifically for analog and survival horror titles.</p>
           <div class="tags">
-            <span class="tag">Props</span>
-            <span class="tag">Atmosphere</span>
-            <span class="tag">Blender</span>
+            <span class="tag">atmosphere</span>
+            <span class="tag">level-design</span>
           </div>
         </div>
       </div>
 
       <!-- Build 4 -->
       <div class="project-card">
-        <img src="image_2026-09-05_120634386.png" alt="Build Showcase 4" class="project-thumb" />
+        <img src="image_2026-09-05_120634386.png" alt="Modular Kit" class="project-thumb" />
         <div class="project-info">
-          <div class="project-title">Modular Structural Kit</div>
-          <p class="project-desc">Concrete wall panels, framing, and industrial set dressing ready for high-concurrency placement.</p>
+          <div class="project-title">Structural Wall Kit</div>
+          <p class="project-desc">Modular structural elements constructed with minimal part budgets for frictionless place assembly.</p>
           <div class="tags">
-            <span class="tag">Modular</span>
-            <span class="tag">Low-Poly</span>
-            <span class="tag">Assets</span>
+            <span class="tag">modular</span>
+            <span class="tag">kitbash</span>
           </div>
         </div>
       </div>
 
       <!-- Build 5 (Render) -->
       <div class="project-card">
-        <img src="renderbux-1788456840672-superbloomed.png" alt="Render Showcase" class="project-thumb" />
+        <img src="renderbux-1788456840672-superbloomed.png" alt="Character Render" class="project-thumb" />
         <div class="project-info">
-          <div class="project-title">Character & Asset Render</div>
-          <p class="project-desc">Custom lighting, high-contrast bloom, and Cycles rendering pipeline for game branding.</p>
+          <div class="project-title">Visual Branding & GFX</div>
+          <p class="project-desc">High-exposure bloom styling and character composition built for marketing and thumbnails.</p>
           <div class="tags">
-            <span class="tag">GFX</span>
-            <span class="tag">Cycles</span>
-            <span class="tag">Lighting</span>
+            <span class="tag">render</span>
+            <span class="tag">lighting</span>
           </div>
         </div>
       </div>
     </div>
 
     <div class="contact-box">
-      <h2>Commission Terms</h2>
-      <p>Delivering custom environments and asset kits as clean .rbxm files. Flat Robux or group funds accepted.</p>
-      <div class="discord-badge">DISCORD // coasticus</div>
+      <h2>Let’s build something sinister.</h2>
+      <p>Available for select commissions. Flat Robux or group payouts upon delivery.</p>
+      <div class="discord-badge">discord // coasticus</div>
     </div>
   </div>
 </body>
