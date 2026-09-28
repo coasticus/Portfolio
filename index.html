@@ -5,7 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="image.png" />
   <title>coasticus</title>
+
+  <!-- Typography: Space Mono for terminal telemetry & Inter for sharp brutalist labels -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,900;1,700;1,900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
   <style>
+    :root {
+      --bg: #000000;
+      --panel: #0a0a0d;
+      --panel-hover: #121217;
+      --border: #1a1a20;
+      --border-focus: #32323e;
+      --crimson: #ff3b30;
+      --white: #ffffff;
+      --muted: #64646e;
+      --subtext: #8e8e98;
+      --font-mono: 'Space Mono', monospace;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -13,146 +33,974 @@
     }
 
     body {
-      background: #0f1012;
-      color: #e0e0e0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      padding: 3rem 1.5rem 6rem;
-      line-height: 1.5;
+      background-color: var(--bg);
+      color: var(--white);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .wrapper {
-      max-width: 1040px;
+    /* Ambient CRT Scanline Effect */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.45) 0px,
+        rgba(0, 0, 0, 0.45) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.85;
+    }
+
+    /* Subtle grid wallpaper */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: #000000;
+      z-index: 9900;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: clamp(1.5rem, 4vw, 3.5rem);
+      font-family: var(--font-mono);
+      color: #e5e5e5;
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.55s;
+    }
+
+    #loader.done {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loader-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .loader-topbar {
+      background: #ffffff;
+      color: #000000;
+      font-weight: 700;
+      padding: 0.35rem 0.85rem;
+      font-size: clamp(0.72rem, 1.8vw, 0.84rem);
+      letter-spacing: 0.12em;
+      display: inline-block;
+      text-transform: uppercase;
+    }
+
+    .skip-btn {
+      background: transparent;
+      border: 1px solid #33333e;
+      color: #888894;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      padding: 0.35rem 0.75rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s ease;
+    }
+
+    .skip-btn:hover {
+      color: #ffffff;
+      border-color: #ffffff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .loader-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin: auto 0;
+      max-width: 900px;
+    }
+
+    .loader-terminal {
+      font-size: clamp(0.8rem, 1.6vw, 0.92rem);
+      line-height: 1.8;
+      margin-bottom: 0.5rem;
+    }
+
+    .term-heading {
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .term-progress {
+      letter-spacing: 0.08em;
+      color: #ffffff;
+      margin-bottom: 0.8rem;
+      word-break: break-all;
+    }
+
+    .term-meta {
+      color: #666672;
+    }
+
+    .term-tip {
+      color: #cccccc;
+      margin-top: 0.2rem;
+    }
+
+    /* Braille Cat ASCII Art styling */
+    .loader-ascii {
+      font-family: 'Space Mono', 'Courier New', monospace;
+      font-size: clamp(0.38rem, 1.05vw, 0.65rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+      white-space: pre;
+      user-select: none;
+      color: #ffffff;
+      opacity: 0.95;
+      overflow-x: auto;
+      text-align: left;
+      margin: 1rem 0;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
+    }
+
+    .loader-bottombar {
+      border-top: 1px solid #1a1a20;
+      padding-top: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: clamp(0.72rem, 1.6vw, 0.8rem);
+      letter-spacing: 0.08em;
+      color: #64646e;
+    }
+
+    .loader-bottombar .status-ready {
+      color: var(--crimson);
+      font-weight: 700;
+    }
+
+    .site-wrapper {
+      position: relative;
+      z-index: 2;
+      max-width: 1140px;
       margin: 0 auto;
+      padding: clamp(3rem, 6vw, 5rem) 1.5rem 5rem;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    header {
-      margin-bottom: 2.5rem;
+    .site-wrapper.ready {
+      opacity: 1;
+      transform: translateY(0);
     }
 
-    h1 {
-      font-size: 1.75rem;
-      font-weight: 600;
-      color: #fff;
-      letter-spacing: -0.02em;
+    /* Top Utility Bar */
+    .top-utility-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
 
-    .bio {
-      color: #888;
-      font-size: 0.95rem;
-      margin-top: 0.4rem;
+    .text-action-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--subtext);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      padding: 0.35rem 0.75rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
     }
 
-    .gallery {
+    .text-action-btn:hover {
+      color: var(--white);
+      border-color: var(--border-focus);
+      background: #0d0d12;
+    }
+
+    /* Hero Section */
+    .brand-hero {
+      text-align: center;
+      margin-bottom: 4.5rem;
+      user-select: none;
+    }
+
+    .brand-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.28em;
+      color: var(--subtext);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .brand-logo {
+      font-size: clamp(3.2rem, 9.5vw, 6.2rem);
+      font-weight: 900;
+      font-style: italic;
+      letter-spacing: -0.05em;
+      color: var(--white);
+      line-height: 0.95;
+      display: inline-block;
+      text-transform: lowercase;
+      transform: skewX(-4deg);
+    }
+
+    .brand-logo sup {
+      font-size: 0.3em;
+      top: -1em;
+      margin-left: 0.2em;
+      font-style: normal;
+      font-weight: 700;
+      display: inline-block;
+      transform: skewX(4deg);
+      color: var(--white);
+    }
+
+    .brand-subline {
+      font-size: clamp(1rem, 2.5vw, 1.35rem);
+      font-weight: 900;
+      font-style: italic;
+      letter-spacing: 0.2em;
+      margin-top: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .brand-subline .accent {
+      color: var(--crimson);
+    }
+
+    .brand-subline .white {
+      color: var(--white);
+      margin-left: 0.4rem;
+    }
+
+    /* Split Hairline Divider */
+    .divider-track {
+      width: 100%;
+      max-width: 440px;
+      height: 2px;
+      background: #18181f;
+      margin: 1.3rem auto 0.9rem;
+      position: relative;
+    }
+
+    .divider-progress {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 58%;
+      background: var(--white);
+    }
+
+    .brand-footer-tags {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      color: #555562;
+      text-transform: uppercase;
+    }
+
+    .catalog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--subtext);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 2rem;
+      margin-bottom: 6rem;
     }
 
-    .work-item {
-      background: #15161a;
-      border: 1px solid #22252c;
-      border-radius: 6px;
+    .item-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
       overflow: hidden;
     }
 
-    .work-item img {
+    .item-card:hover {
+      border-color: var(--border-focus);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.8);
+    }
+
+    .item-card-top {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: #72727e;
+      letter-spacing: 0.1em;
+      padding: 0.65rem 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: #000000;
+      text-transform: uppercase;
+    }
+
+    .item-status-online {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: #9e9ea8;
+    }
+
+    .item-status-online::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      background: var(--crimson);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--crimson);
+    }
+
+    .item-preview {
       width: 100%;
-      height: 260px;
+      aspect-ratio: 16 / 10;
+      background: #050508;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .item-preview img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
       display: block;
-      background: #1a1c22;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+      filter: contrast(1.06) brightness(0.94);
     }
 
-    .work-caption {
-      padding: 0.85rem 1rem;
-      font-size: 0.85rem;
-      color: #aaa;
-      border-top: 1px solid #1f2228;
+    .item-card:hover .item-preview img {
+      transform: scale(1.03);
+      filter: contrast(1.1) brightness(1.02);
     }
 
-    .work-caption strong {
-      color: #eee;
-      font-weight: 500;
-      display: block;
-      margin-bottom: 0.15rem;
+    .item-card-bot {
+      padding: 1.1rem 1.15rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #060608;
+    }
+
+    .item-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: var(--white);
+      text-transform: uppercase;
+      font-style: italic;
+    }
+
+    .inspect-tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--crimson);
+      letter-spacing: 0.08em;
+      transition: transform 0.15s ease;
+    }
+
+    .item-card:hover .inspect-tag {
+      transform: translateX(2px);
     }
 
     footer {
-      margin-top: 4rem;
-      padding-top: 2rem;
-      border-top: 1px solid #1f2228;
-      font-size: 0.9rem;
-      color: #777;
+      border-top: 1px solid var(--border);
+      padding-top: 2.2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 1.5rem;
+      font-size: 0.82rem;
+      color: var(--subtext);
+      font-family: var(--font-mono);
     }
 
-    footer a {
-      color: #ccc;
-      text-decoration: none;
+    .commissions-status {
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    footer a:hover {
-      text-decoration: underline;
+    .commissions-status .dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .discord-btn {
+      background: #09090c;
+      border: 1px solid var(--border-focus);
+      color: var(--white);
+      font-family: var(--font-mono);
+      padding: 0.55rem 0.95rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      transition: all 0.2s ease;
+      letter-spacing: 0.05em;
+    }
+
+    .discord-btn:hover {
+      background: #121218;
+      border-color: #555562;
+    }
+
+    .copy-flag {
+      font-size: 0.65rem;
+      color: var(--subtext);
+      border-left: 1px solid #282832;
+      padding-left: 0.5rem;
+      letter-spacing: 0.08em;
+    }
+
+    #viewer {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 10000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1rem, 3vw, 2.5rem);
+      cursor: zoom-out;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    #viewer.open {
+      display: flex;
+    }
+
+    .viewer-content {
+      position: relative;
+      max-width: 95vw;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: default;
+    }
+
+    .viewer-topbar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #a0a0aa;
+      letter-spacing: 0.1em;
+    }
+
+    .viewer-close-btn {
+      background: transparent;
+      border: 1px solid #33333d;
+      color: #fff;
+      font-family: var(--font-mono);
+      padding: 0.3rem 0.6rem;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all 0.2s;
+    }
+
+    .viewer-close-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    #viewer-img {
+      max-width: 95vw;
+      max-height: 80vh;
+      border: 1px solid #282834;
+      object-fit: contain;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.95);
+    }
+
+    .viewer-hint {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: #64646e;
+      margin-top: 0.75rem;
+      letter-spacing: 0.08em;
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="wrapper">
-    <header>
-      <h1>coasticus</h1>
-      <p class="bio">Roblox environments, level design, and 3D renders made in Studio, Blender, and Photoshop.</p>
+
+  <!-- Background decorative grid -->
+  <div class="bg-grid"></div>
+
+  <!-- ================= LOADING SCREEN ================= -->
+  <div id="loader" role="dialog" aria-modal="true">
+    <div class="loader-header-row">
+      <div class="loader-topbar">
+        LOADING. . . PLEASE WAIT &nbsp;&nbsp; 読み込み中. . . 待って下さい
+      </div>
+      <button class="skip-btn" onclick="finishBoot()">SKIP [ESC]</button>
+    </div>
+
+    <div class="loader-body">
+      <div class="loader-terminal">
+        <div class="term-heading">&#9660; LOADING ASSETS</div>
+        <div class="term-progress">&#9658; CURRENT PROGRESS... [<span id="prog-bar">■■■■■■················</span>]</div>
+        <div class="term-meta">[SYS] (00:00:0<span id="timer">1</span>) ELAPSED</div>
+        <div class="term-tip">[TIP] Redirect your momentum, don't kill it.</div>
+      </div>
+
+      <!-- Exact Braille / Unicode Cat ASCII Art -->
+      <pre class="loader-ascii">
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⡿⠇⠀⠀⠀⠀⢻⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡇⠀⠀⠀⠀⡸⣞⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠃⠀⠀⠀⢀⣧⢿⣽⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⢴⣿⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⣼⣞⡿⣞⡅⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠈⠓⢤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⠀⠀⠀⣰⣟⢾⣽⢫⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⣿⣠⢤⣶⡻⣞⣿⣺⢯⣽⣳⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⢠⣄⡀⠀⠀⠀⠀⠙⢦⡀⠀⠀⠀⠀⣀⣠⣤⣿⣽⣻⢾⣽⣷⣾⣽⣻⣞⣷⣳⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠈⢻⣿⣶⣄⡀⠀⠀⠀⣉⣲⣴⢶⣞⡿⣽⣞⡷⣯⢿⡽⣞⣿⠟⠋⠁⠉⠈⠳⣟⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⢻⣿⣿⣿⣿⢶⣾⣿⡽⣯⣟⡾⣽⡷⣯⣟⡽⡾⣽⡯⠁⠀⠀⠀⠀⠀⠀⢮⣭⣦⡀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠉⢞⣿⣿⢯⡿⣿⣯⣟⣷⣯⢿⣳⣟⡷⣽⣼⣻⣽⠀⠀⠀⠀⠀⠀⠀⢀⣼⡯⡗⠋⠤⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⢾⣿⣿⣯⣽⣾⣿⣾⣗⡿⣯⡷⣯⣟⡷⣞⣼⣿⣀⠀⠀⠀⠀⢀⣠⡿⣏⡗⠈⠐⠈⠅⠀⠀⠀⠀⠀
+⠀⠀⢀⣼⠛⠏⠉⠉⠽⢟⢿⣿⣿⣿⣿⣷⣻⢾⡽⣞⡷⠄⡹⣶⢿⣻⢿⣻⡽⢯⣼⢦⠶⠁⠈⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⣸⣯⠇⠀⠀⠀⠀⠀⠁⣽⣿⣿⣿⣷⣯⣿⣽⣛⡦⠀⠀⢩⣿⣹⢯⣷⢻⣟⠺⢣⡖⣘⠤⠓⠀⠀⠀⠀⠀⠀
+⠀⠀⢈⣿⡃⠁⠀⠀⠀⢀⣤⣾⣟⢿⣻⣿⣿⣟⡾⣽⡳⠄⠎⢳⣯⢯⣟⡾⢯⣞⣯⣓⠉⢀⠀⠀⡄⢢⡀⠀⠀⠀
+⠀⠀⣸⣷⣷⣶⣳⣶⣺⣿⣿⣳⢯⣟⣿⣿⣳⢯⠛⠅⠃⠀⠀⣴⣿⡿⣬⢶⠾⠙⣊⣥⠾⡒⠊⢁⢠⠣⣌⠀⠀⠀
+⠀⠀⢺⡽⣾⡽⣯⣟⣿⡿⣯⣿⣿⣾⢿⣿⠳⢏⣈⢠⠀⠀⣰⢿⡿⣽⣉⡶⠌⠋⠉⣀⡀⠁⠀⠀⠀⣘⡐⣂⠀⠀
+⠀⠀⠘⣽⣳⣟⣳⣟⣾⣽⣿⣿⣿⣿⣿⣦⣜⡻⡽⠆⠧⣴⡟⣯⢟⡳⣭⠲⠄⠐⠀⠀⠀⠈⠁⠉⠑⢊⡕⢃⠄⠀
+⠀⠀⠀⠹⣿⣾⣿⣯⣿⣾⣿⣿⣿⣿⣿⣿⣿⣿⣾⢧⠀⠹⠾⡵⡞⡽⢢⣃⠐⠀⠀⠄⡐⠀⠀⠀⡘⢦⠘⣌⠀⠀
+⠀⠀⠀⠐⠹⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢯⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠒⡈⠀⡀⠄⡑⠢⣉⠴⣈⣆⠀
+⠀⠀⠀⠀⠀⣀⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢯⣏⡴⣶⣵⣢⢤⢠⡀⡄⢠⠐⡰⢌⡱⠀⡁⡀⠆⡥⠆⡥⣛⡽⣾⠀
+⠀⠀⡀⠔⠉⠀⠀⢽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣼⣻⢷⣯⡽⣞⣷⣻⡼⣡⢋⡔⠣⠜⡐⢐⠠⡓⣤⣙⣲⣽⣻⢷⠀
+⠀⠀⠀⠀⠀⠀⠀⠘⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡿⣽⣞⣷⣻⡴⣣⢜⡱⣊⡕⣊⠠⡙⡰⣭⢷⣯⣿⢿⠀
+      </pre>
+    </div>
+
+    <div class="loader-bottombar">
+      <div>&#10022; INITIALIZING <span>COASTICUS</span></div>
+      <div>STATUS: <span class="status-ready" id="status-label">PREPARING</span></div>
+    </div>
+  </div>
+
+  <!-- ================= MAIN PORTFOLIO ================= -->
+  <div class="site-wrapper" id="content">
+    
+    <!-- Top utility actions -->
+    <div class="top-utility-bar">
+      <button class="text-action-btn" onclick="replayBoot()">&#9654; REPLAY BOOT</button>
+    </div>
+
+    <!-- Hero Branding -->
+    <header class="brand-hero">
+      <div class="brand-eyebrow">PORTFOLIO // WORKS</div>
+      <h1 class="brand-logo">coasticus<sup>&reg;</sup></h1>
+      <div class="brand-subline">
+        <span class="accent">STUDIO</span><span class="white">SHOWCASE</span>
+      </div>
+      <div class="divider-track">
+        <div class="divider-progress"></div>
+      </div>
+      <div class="brand-footer-tags">ENVIRONMENTS / LEVEL DESIGN / RENDERS</div>
     </header>
 
-    <main class="gallery">
-      <div class="work-item">
-        <img src="image_2026-09-05_120537395.png" alt="Industrial Corridor" />
-        <div class="work-caption">
-          <strong>Industrial Corridor</strong>
-          Modular hallway test with concrete framing and point lighting.
-        </div>
+    <main>
+      <div class="catalog-header">
+        <span>CATALOG // ACTIVE SPECIMENS</span>
+        <span>INDEX [01 &bull; 02]</span>
       </div>
 
-      <div class="work-item">
-        <img src="image_2026-09-05_120605268.png" alt="Overgrown Door" />
-        <div class="work-caption">
-          <strong>Overgrown Blast Gate</strong>
-          Sci-fi door structure built with red lighting and exterior ivy.
-        </div>
-      </div>
+      <div class="grid">
+        <!-- 01: Apocalypse Blast Door -->
+        <article class="item-card" onclick="openViewer('image_2026-09-05_120605268.png', 'Apocalypse Blast Door', 'blastDoor')">
+          <div class="item-card-top">
+            <span>ITEM // 01</span>
+            <span class="item-status-online">STATUS: ONLINE</span>
+          </div>
+          <div class="item-preview">
+            <img 
+              id="img-01"
+              src="image_2026-09-05_120605268.png" 
+              alt="Apocalypse Blast Door" 
+              loading="lazy" 
+              onerror="renderFallbackVisual(this, 'blastDoor')"
+            />
+          </div>
+          <div class="item-card-bot">
+            <h2 class="item-title">Apocalypse Blast Door</h2>
+            <span class="inspect-tag">[VIEW]</span>
+          </div>
+        </article>
 
-      <div class="work-item">
-        <img src="image_2026-09-05_120619417.png" alt="Grass Scene GFX" />
-        <div class="work-caption">
-          <strong>Field Scene GFX</strong>
-          Avatar render placed in custom grass terrain, composited in Photoshop.
-        </div>
-      </div>
-
-      <div class="work-item">
-        <img src="image_2026-09-05_120634386.png" alt="Blender Rig Pose" />
-        <div class="work-caption">
-          <strong>Character Pose Test</strong>
-          Rig lighting and framing in Blender.
-        </div>
-      </div>
-
-      <div class="work-item">
-        <img src="renderbux-1788456840672-superbloomed.png" alt="Cycles Bloom Render" />
-        <div class="work-caption">
-          <strong>Bloom Render</strong>
-          Cycles render test focused on high exposure and edge lighting.
-        </div>
+        <!-- 02: Industrial Room -->
+        <article class="item-card" onclick="openViewer('image_2026-09-05_120537395.png', 'Industrial Room', 'industrial')">
+          <div class="item-card-top">
+            <span>ITEM // 02</span>
+            <span class="item-status-online">STATUS: ONLINE</span>
+          </div>
+          <div class="item-preview">
+            <img 
+              id="img-02"
+              src="image_2026-09-05_120537395.png" 
+              alt="Industrial Room" 
+              loading="lazy" 
+              onerror="renderFallbackVisual(this, 'industrial')"
+            />
+          </div>
+          <div class="item-card-bot">
+            <h2 class="item-title">Industrial Room</h2>
+            <span class="inspect-tag">[VIEW]</span>
+          </div>
+        </article>
       </div>
     </main>
 
     <footer>
-      <span>Open for commissions (flat Robux or group payout)</span>
-      <span>Discord: <strong>coasticus</strong></span>
+      <div class="commissions-status">
+        <span class="dot"></span>
+        <span>OPEN FOR COMMISSIONS // FLAT ROBUX OR GROUP PAYOUT</span>
+      </div>
+      <div>
+        <button class="discord-btn" onclick="copyDiscordHandle()" title="Click to copy Discord handle">
+          <span>DISCORD // <strong style="color:#ffffff;">coasticus</strong></span>
+          <span class="copy-flag" id="copy-status">COPY</span>
+        </button>
+      </div>
     </footer>
   </div>
+
+  <!-- Zoom Lightbox Modal -->
+  <div id="viewer" onclick="closeViewer(event)">
+    <div class="viewer-content" onclick="event.stopPropagation()">
+      <div class="viewer-topbar">
+        <span id="viewer-title">INSPECT SPECIMEN</span>
+        <button class="viewer-close-btn" onclick="closeViewer()">CLOSE [ESC]</button>
+      </div>
+      <img id="viewer-img" src="" alt="Expanded View" />
+      <div class="viewer-hint">CLICK OUTSIDE OR PRESS ESC TO DISMISS</div>
+    </div>
+  </div>
+
+  <script>
+    // Boot sequence animation controller
+    let step = 0;
+    let bootInterval = null;
+    const bar = document.getElementById('prog-bar');
+    const timer = document.getElementById('timer');
+    const statusLabel = document.getElementById('status-label');
+    const loader = document.getElementById('loader');
+    const content = document.getElementById('content');
+
+    const frames = [
+      "■■■■■■··············",
+      "■■■■■■■■■···········",
+      "■■■■■■■■■■■■········",
+      "■■■■■■■■■■■■■■■■····",
+      "■■■■■■■■■■■■■■■■■■■■"
+    ];
+
+    function runBoot() {
+      step = 0;
+      loader.classList.remove('done');
+      content.classList.remove('ready');
+      statusLabel.textContent = "INITIALIZING";
+
+      clearInterval(bootInterval);
+      bootInterval = setInterval(() => {
+        if (step < frames.length) {
+          bar.textContent = frames[step];
+          timer.textContent = (step + 1).toString();
+          step++;
+        } else {
+          clearInterval(bootInterval);
+          statusLabel.textContent = "READY";
+          setTimeout(finishBoot, 220);
+        }
+      }, 260);
+    }
+
+    function finishBoot() {
+      clearInterval(bootInterval);
+      loader.classList.add('done');
+      content.classList.add('ready');
+    }
+
+    function replayBoot() {
+      runBoot();
+    }
+
+    // Auto start on page load
+    window.addEventListener('load', () => {
+      runBoot();
+    });
+
+    // Press any key to skip boot when active
+    window.addEventListener('keydown', (e) => {
+      if (!loader.classList.contains('done')) {
+        finishBoot();
+      } else if (e.key === 'Escape' && viewer.classList.contains('open')) {
+        closeViewer();
+      }
+    });
+
+    // Fallback Canvas Renderer to ensure immediate preview display in editor
+    function renderFallbackVisual(imgElement, type) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1200;
+      canvas.height = 750;
+      const ctx = canvas.getContext('2d');
+
+      if (type === 'blastDoor') {
+        // Atmospheric overgrown blast door with intense red beacon
+        ctx.fillStyle = '#0a0b0d';
+        ctx.fillRect(0, 0, 1200, 750);
+
+        // Angled concrete bunker portal
+        ctx.fillStyle = '#14161a';
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(260, 0);
+        ctx.lineTo(340, 750);
+        ctx.lineTo(0, 750);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(1200, 0);
+        ctx.lineTo(940, 0);
+        ctx.lineTo(860, 750);
+        ctx.lineTo(1200, 750);
+        ctx.fill();
+
+        // Blast door housing
+        ctx.fillStyle = '#1f2229';
+        ctx.fillRect(340, 60, 520, 690);
+
+        // Heavy vertical door panels
+        ctx.fillStyle = '#2b2f38';
+        ctx.fillRect(360, 80, 230, 670);
+        ctx.fillRect(610, 80, 230, 670);
+
+        // Angled hazard beam
+        ctx.save();
+        ctx.translate(460, 360);
+        ctx.rotate(-0.35);
+        ctx.fillStyle = '#bfa120';
+        ctx.fillRect(-10, -320, 42, 640);
+        for (let i = -320; i < 320; i += 40) {
+          ctx.fillStyle = '#18181b';
+          ctx.beginPath();
+          ctx.moveTo(-10, i);
+          ctx.lineTo(32, i + 25);
+          ctx.lineTo(32, i + 45);
+          ctx.lineTo(-10, i + 20);
+          ctx.fill();
+        }
+        ctx.restore();
+
+        // Overgrown ivy foliage
+        ctx.fillStyle = '#304724';
+        for (let j = 0; j < 35; j++) {
+          ctx.beginPath();
+          ctx.arc(320 + (j * 17) % 550, 100 + (j * 23) % 480, 24 + (j % 18), 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = '#4f6c38';
+        for (let k = 0; k < 25; k++) {
+          ctx.beginPath();
+          ctx.arc(360 + (k * 21) % 480, 450 + (k * 15) % 280, 18 + (k % 14), 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Glowing red central warning beacon
+        const radial = ctx.createRadialGradient(600, 330, 2, 600, 330, 280);
+        radial.addColorStop(0, '#ffffff');
+        radial.addColorStop(0.12, 'rgba(255, 60, 45, 0.95)');
+        radial.addColorStop(0.4, 'rgba(255, 20, 30, 0.35)');
+        radial.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = radial;
+        ctx.fillRect(200, 50, 800, 600);
+
+        // Core light crystal
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.moveTo(600, 280);
+        ctx.lineTo(618, 330);
+        ctx.lineTo(600, 380);
+        ctx.lineTo(582, 330);
+        ctx.fill();
+
+      } else {
+        // Brutalist industrial warehouse with columns and overhead fluorescent lights
+        ctx.fillStyle = '#101116';
+        ctx.fillRect(0, 0, 1200, 750);
+
+        // Perspective floor
+        const floorGrad = ctx.createLinearGradient(0, 420, 0, 750);
+        floorGrad.addColorStop(0, '#1c1e24');
+        floorGrad.addColorStop(1, '#2c2f38');
+        ctx.fillStyle = floorGrad;
+        ctx.beginPath();
+        ctx.moveTo(420, 420);
+        ctx.lineTo(780, 420);
+        ctx.lineTo(1200, 750);
+        ctx.lineTo(0, 750);
+        ctx.fill();
+
+        // Floor perspective lines
+        ctx.strokeStyle = '#22252e';
+        ctx.lineWidth = 3;
+        for (let x = -200; x <= 1400; x += 180) {
+          ctx.beginPath();
+          ctx.moveTo(600, 420);
+          ctx.lineTo(x, 750);
+          ctx.stroke();
+        }
+
+        // Pillars and columns
+        ctx.fillStyle = '#22252f';
+        ctx.fillRect(800, 0, 260, 750);
+        ctx.fillStyle = '#2e3340';
+        ctx.fillRect(840, 0, 180, 750);
+
+        ctx.fillStyle = '#1e212a';
+        ctx.fillRect(0, 0, 280, 750);
+
+        // Left pipe rack scaffolding
+        ctx.strokeStyle = '#15161b';
+        ctx.lineWidth = 5;
+        for (let p = 120; p < 700; p += 65) {
+          ctx.strokeRect(30, p, 240, 45);
+        }
+
+        // Bright overhead neon lighting bloom
+        const lightBloom = ctx.createRadialGradient(600, 110, 5, 600, 110, 260);
+        lightBloom.addColorStop(0, '#ffffff');
+        lightBloom.addColorStop(0.2, 'rgba(230, 245, 255, 0.7)');
+        lightBloom.addColorStop(0.6, 'rgba(100, 150, 255, 0.15)');
+        lightBloom.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = lightBloom;
+        ctx.fillRect(350, 0, 500, 400);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(575, 40, 12, 110);
+        ctx.fillRect(605, 40, 12, 110);
+      }
+
+      imgElement.src = canvas.toDataURL('image/png');
+    }
+
+    const viewer = document.getElementById('viewer');
+    const viewerImg = document.getElementById('viewer-img');
+    const viewerTitle = document.getElementById('viewer-title');
+
+    function openViewer(src, title, fallbackType) {
+      viewerTitle.textContent = title.toUpperCase();
+      viewerImg.src = src;
+
+      viewerImg.onerror = function() {
+        renderFallbackVisual(viewerImg, fallbackType);
+      };
+
+      viewer.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeViewer(e) {
+      viewer.classList.remove('open');
+      viewerImg.src = '';
+      document.body.style.overflow = 'auto';
+    }
+
+    function copyDiscordHandle() {
+      const handle = "coasticus";
+      const statusEl = document.getElementById('copy-status');
+      
+      const textArea = document.createElement("textarea");
+      textArea.value = handle;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-9999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          statusEl.textContent = "COPIED!";
+          statusEl.style.color = "#10b981";
+          setTimeout(() => {
+            statusEl.textContent = "COPY";
+            statusEl.style.color = "var(--subtext)";
+          }, 2000);
+        } else {
+          statusEl.textContent = "COASTICUS";
+        }
+      } catch (err) {
+        statusEl.textContent = "COASTICUS";
+      } finally {
+        document.body.removeChild(textArea);
+      }
+    }
+  </script>
 </body>
 </html>
